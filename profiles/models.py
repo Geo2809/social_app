@@ -21,6 +21,12 @@ class Profile(models.Model):
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
+    def get_friends(self):
+        return self.friends.all()
+
+    def get_number_of_friends(self):
+        return self.friends.all().count()
+
     def __str__(self) -> str:
         return f"{self.first_name} - {self.last_name} - {self.user.username}"
 
@@ -30,3 +36,21 @@ class Profile(models.Model):
         else:
             self.slug = slugify(f'{self.user} - {self.user.id}')
         return super(Profile, self).save(*args, **kwargs)
+
+
+SEND_CHOICE = 'send'
+ACCEPTED_CHOICE = 'accepted'
+
+STATUS_CHOICES = [
+    (SEND_CHOICE, 'send'),
+    (ACCEPTED_CHOICE, 'accepted')
+]
+class Relationship(models.Model):
+    sender = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='receiver')
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f'{self.sender} - {self.receiver} - {self.status}'
