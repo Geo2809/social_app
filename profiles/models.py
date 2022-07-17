@@ -27,6 +27,28 @@ class Profile(models.Model):
     def get_number_of_friends(self):
         return self.friends.all().count()
 
+    def get_all_posts(self):
+        return self.posts.all()
+
+    def get_number_of_posts(self):
+        return self.posts.all().count()
+
+    def get_number_of_received_likes(self):
+        posts = self.posts.all()
+        total_likes = 0
+        for item in posts:
+            total_likes += item.liked.all().count()
+        return total_likes
+
+    def get_number_of_given_likes(self):
+        likes = self.like_set.all()
+        total_liked = 0
+        for item in likes:
+            if item.value == 'Like':
+                total_liked += 1       
+        return total_liked
+        
+
     def __str__(self) -> str:
         return f"{self.first_name} - {self.last_name} - {self.user.username}"
 
