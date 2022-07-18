@@ -6,4 +6,6 @@ app_name = 'profiles'
 urlpatterns = [
     path('myprofile/', views.my_profile_view, name='my-profile-view'),
     path('all-profiles/', views.ProfileListView.as_view(), name='all-profiles-view'),
+    path('send-friend-request/', views.send_friend_request_view, name='send-friend-request-view'),
+    path('remove-friend/', views.remove_from_friends, name='remove-friend-view'),
 ]

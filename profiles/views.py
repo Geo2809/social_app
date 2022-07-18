@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from .models import Profile, Relationship
 from .forms import ProfileModelForm
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -19,9 +20,6 @@ def my_profile_view(request):
         'confirm': confirm
     }
     return render(request, 'profiles/myprofile.html', context)
-
-
-
 
 
 class ProfileListView(ListView):
@@ -54,3 +52,24 @@ class ProfileListView(ListView):
         return context
 
 
+def send_friend_request_view(request):
+    if request.method == 'POST':
+        sender = Profile.objects.get(user=request.user)
+        receiver = Profile.objects.get(pk=request.POST.get('profile_pk'))
+        Relationship.objects.create(sender=sender, receiver=receiver, status='send')
+        return redirect(request.META.get('HTTP_REFERER'))
+    return redirect('profiles:my-profile-view')
+
+
+def remove_from_friends(request):
+    if request.method == 'POST':
+        sender = Profile.objects.get(user=request.user)
+        receiver = Profile.objects.get(pk=request.POST.get('profile_pk'))
+
+        relationship = Relationship.objects.get(
+            (Q(sender=sender) & Q(receiver=receiver)) | (Q(sender=receiver) & Q(receiver=sender))
+        )
+        relationship.delete()
+        return redirect(request.META.get('HTTP_REFERER'))
+    return redirect('profiles:my-profile-view')
+        
