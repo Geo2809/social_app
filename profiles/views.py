@@ -51,6 +51,29 @@ class ProfileListView(ListView):
             context['is_empty'] = True
         return context
 
+def friend_requests_received_view(request):
+    profile = Profile.objects.get(user=request.user)
+    qs = Relationship.objects.friend_requests_received(profile)
+    results = [x.sender for x in qs]
+    is_empty = False
+    if len(results) == 0:
+        is_empty = True
+    context = {
+        'qs': results,
+        'is_empty': is_empty
+    }
+    return render(request, 'profiles/friend_requests_received.html', context)
+
+
+
+def available_profiles_list_view(request):
+    user = request.user
+    profiles = Profile.objects.get_all_profiles_available(user)
+    
+    context = {
+        'profiles': profiles
+    }
+    return render(request, 'profiles/available_profiles_list.html', context) 
 
 def send_friend_request_view(request):
     if request.method == 'POST':

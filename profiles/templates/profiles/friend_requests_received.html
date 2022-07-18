@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Friend Requests Received{% endblock title %}
+
+
+{% block content %}
+    {% if is_empty %}
+    <h1>You don't have friend requests.</h1>
+    {% endif %}
+        {% for profile in qs %}
+            <div class="ui segment">
+                <div class="ui grid">
+                    <div class="row">
+                        <div class="four wide column">
+                            <img class="ui small circular image" src="{{ profile.avatar.url }}" alt="">
+                        </div>
+                        <div class="twelve wide column">
+                            <h3>{{ profile.user }}</h3>
+                            <p>{{ profile.bio }}</p>
+                            <a href="">
+                                <button class="ui primary button mb-5 w-big">See Profile</button>
+                            </a>
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="profile_pk" value={{profile.pk}}>
+                                <button type="submit" class="ui positive basic button mb-5 w-big"><i class="check icon"></i>Accept</button>
+                            </form>
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="profile_pk" value={{profile.pk}}>
+                                <button type="submit" class="ui negative basic button mb-5 w-big"><i class="close icon"></i>Reject</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+{% endblock content %}

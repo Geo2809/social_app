@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Available Profiles{% endblock title %}
+
+
+{% block content %}
+<ul>
+    {% for profile in profiles %}
+    <li>{{ profile }}</li>
+    {% endfor %}
+</ul>
+{% endblock content %}
