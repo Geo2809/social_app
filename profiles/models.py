@@ -3,9 +3,28 @@ from django.conf import settings
 from django_countries.fields import CountryField
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
+from django.db.models import Q
 
 class CustomUser(AbstractUser):
     pass
+
+
+class ProfileManager(models.Manager):
+    def get_all_profiles(self, me):
+        profiles = Profile.objects.all().exclude(user=me)
+        return profiles
+
+    def get_all_profiles_available(self, sender):
+        profiles = Profile.objects.all().exclude(user=sender)
+        profile = Profile.objects.get(user=sender)
+        qs = Relationship.objects.filter(Q(sender=profile) | Q(receiver=profile))
+        accepted = set([])
+        for rel in qs:
+            if rel.status == 'accepted':
+                accepted.add(rel.sender)
+                accepted.add(rel.receiver)
+        available = [profile for profile in profiles if profile not in accepted]
+        return available
 
 
 class Profile(models.Model):
@@ -20,6 +39,8 @@ class Profile(models.Model):
     friends = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='friends')
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    objects = ProfileManager()
 
     def get_friends(self):
         return self.friends.all()
@@ -67,12 +88,21 @@ STATUS_CHOICES = [
     (SEND_CHOICE, 'send'),
     (ACCEPTED_CHOICE, 'accepted')
 ]
+
+class RelationshipManager(models.Manager):
+    def friend_requests_received(self, receiver):
+        requests_received = Relationship.objects.filter(receiver=receiver, status='send')
+        return requests_received
+
+
 class Relationship(models.Model):
     sender = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='sender')
     receiver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='receiver')
     status = models.CharField(max_length=8, choices=STATUS_CHOICES)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    objects = RelationshipManager()
 
     def __str__(self) -> str:
         return f'{self.sender} - {self.receiver} - {self.status}'

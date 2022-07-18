@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}All Profiles{% endblock title %}
+
+
+{% block content %}
+    {% if is_empty %}
+    <h1>There's no one new here for now.</h1>
+    {% endif %}
+
+        {% for profile in profiles %}
+            <div class="ui segment">
+                <div class="ui grid">
+                    <div class="row">
+                        <div class="three wide column">
+                            <img class="ui small circular image" src="{{ profile.avatar.url }}" alt="">
+                        </div>
+                        <div class="thirteen wide column">
+                                <h3>{{ profile.user }}</h3>
+                                <p>{{ profile.bio }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+{% endblock content %}
