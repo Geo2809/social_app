@@ -20,12 +20,12 @@
                             <a href="">
                                 <button class="ui primary button mb-5 w-big">See Profile</button>
                             </a>
-                            <form action="" method="POST">
+                            <form action="{% url 'profiles:accept-friend-request-view' %}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="profile_pk" value={{profile.pk}}>
                                 <button type="submit" class="ui positive basic button mb-5 w-big"><i class="check icon"></i>Accept</button>
                             </form>
-                            <form action="" method="POST">
+                            <form action="{% url 'profiles:reject-friend-request-view' %}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="profile_pk" value={{profile.pk}}>
                                 <button type="submit" class="ui negative basic button mb-5 w-big"><i class="close icon"></i>Reject</button>

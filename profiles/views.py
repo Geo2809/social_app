@@ -1,9 +1,9 @@
-from django.views.generic import ListView
-from django.shortcuts import redirect, render
-from .models import Profile, Relationship
-from .forms import ProfileModelForm
-from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import ListView, DetailView
+from django.contrib.auth import get_user_model
+from .forms import ProfileModelForm
+from .models import Profile, Relationship
 
 User = get_user_model()
 
@@ -20,6 +20,9 @@ def my_profile_view(request):
         'confirm': confirm
     }
     return render(request, 'profiles/myprofile.html', context)
+
+
+
 
 
 class ProfileListView(ListView):
@@ -64,7 +67,23 @@ def friend_requests_received_view(request):
     }
     return render(request, 'profiles/friend_requests_received.html', context)
 
+def accept_friend_request(request):
+    if request.method == 'POST':
+        sender = Profile.objects.get(pk=request.POST.get('profile_pk'))
+        receiver = Profile.objects.get(user=request.user)
+        relationship = get_object_or_404(Relationship, sender=sender, receiver=receiver)
+        if relationship.status == 'send':
+            relationship.status = 'accepted'
+            relationship.save()
+    return redirect('profiles:friend-requests-received-view')
 
+def reject_friend_request(request):
+    if request.method == 'POST':
+        sender = Profile.objects.get(pk=request.POST.get('profile_pk'))
+        receiver = Profile.objects.get(user=request.user)
+        relationship = get_object_or_404(Relationship, sender=sender, receiver=receiver)
+        relationship.delete()
+    return redirect('profiles:friend-requests-received-view')  
 
 def available_profiles_list_view(request):
     user = request.user
