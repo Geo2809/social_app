@@ -4,7 +4,7 @@ from django_countries.fields import CountryField
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Q
-
+from django.urls import reverse
 class CustomUser(AbstractUser):
     pass
 
@@ -42,6 +42,9 @@ class Profile(models.Model):
 
     objects = ProfileManager()
 
+    def get_absolute_url(self):
+        return reverse("profiles:profile-detail-view", kwargs={"slug": self.slug})
+         
     def get_friends(self):
         return self.friends.all()
 

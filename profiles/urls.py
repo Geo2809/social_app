@@ -12,4 +12,5 @@ urlpatterns = [
     path('remove-friend/', views.remove_from_friends, name='remove-friend-view'),
     path('my-friend-requests/accept/', views.accept_friend_request, name='accept-friend-request-view'),
     path('my-friend-requests/reject/', views.reject_friend_request, name='reject-friend-request-view'),
+    path('<slug:slug>/', views.ProfileDetailView.as_view(), name='profile-detail-view'),
 ]

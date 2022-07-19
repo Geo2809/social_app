@@ -18,10 +18,11 @@
                         <div class="twelve wide column">
                                 <h3>{{ profile.user }}</h3>
                                 <p>{{ profile.bio }}</p>
-                                <button class="ui primary button mb-5 w-big">See Profile</button>
+                                <a href="{{ profile.get_absolute_url }}"><button class="ui primary button mb-5 w-big">See Profile</button>
+                                </a>
                                 <br>
                                 {% if profile.user not in rel_receiver and profile.user not in rel_sender %}
-                            <form action="{% url 'profiles:send-friend-request-view' %}" method="POST">
+                                <form action="{% url 'profiles:send-friend-request-view' %}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="profile_pk" value={{profile.pk}}>
                                     <button class="ui positive basic button mb-5 w-big"><i class="plus square icon"></i>Send friend request</button>

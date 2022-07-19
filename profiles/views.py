@@ -22,7 +22,29 @@ def my_profile_view(request):
     return render(request, 'profiles/myprofile.html', context)
 
 
+class ProfileDetailView(DetailView):
+    model = Profile
+    template_name='profiles/profile_detail.html'
+    context_object_name = 'profile'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = User.objects.get(username__iexact=self.request.user)
+        profile = Profile.objects.get(user=user)
+        rel_r = Relationship.objects.filter(sender=profile)
+        rel_s = Relationship.objects.filter(receiver=profile)
+        rel_receiver = []
+        rel_sender = []
+        for rel in rel_r:
+            rel_receiver.append(rel.receiver.user)
+        for rel in rel_s:
+            rel_sender.append(rel.sender.user)
+        context['rel_receiver'] = rel_receiver
+        context['rel_sender'] = rel_sender
+        context['is_empty'] = False
+        context['posts'] = self.get_object().get_all_posts()
+        context['len_posts'] = True if len(self.get_object().get_all_posts()) > 0 else False
+        return context
 
 
 class ProfileListView(ListView):
