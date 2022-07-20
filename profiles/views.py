@@ -4,9 +4,12 @@ from django.views.generic import ListView, DetailView
 from django.contrib.auth import get_user_model
 from .forms import ProfileModelForm
 from .models import Profile, Relationship
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin 
 
 User = get_user_model()
 
+@login_required
 def my_profile_view(request):
     profile = Profile.objects.get(user=request.user)
     form = ProfileModelForm(request.POST or None, request.FILES or None, instance=profile)
@@ -22,7 +25,7 @@ def my_profile_view(request):
     return render(request, 'profiles/myprofile.html', context)
 
 
-class ProfileDetailView(DetailView):
+class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = Profile
     template_name='profiles/profile_detail.html'
     context_object_name = 'profile'
@@ -47,7 +50,7 @@ class ProfileDetailView(DetailView):
         return context
 
 
-class ProfileListView(ListView):
+class ProfileListView(LoginRequiredMixin, ListView):
     model = Profile
     template_name = 'profiles/profile_list.html'
     context_object_name = 'profiles'
@@ -76,6 +79,7 @@ class ProfileListView(ListView):
             context['is_empty'] = True
         return context
 
+@login_required
 def friend_requests_received_view(request):
     profile = Profile.objects.get(user=request.user)
     qs = Relationship.objects.friend_requests_received(profile)
@@ -89,6 +93,7 @@ def friend_requests_received_view(request):
     }
     return render(request, 'profiles/friend_requests_received.html', context)
 
+@login_required
 def accept_friend_request(request):
     if request.method == 'POST':
         sender = Profile.objects.get(pk=request.POST.get('profile_pk'))
@@ -99,6 +104,7 @@ def accept_friend_request(request):
             relationship.save()
     return redirect('profiles:friend-requests-received-view')
 
+@login_required
 def reject_friend_request(request):
     if request.method == 'POST':
         sender = Profile.objects.get(pk=request.POST.get('profile_pk'))
@@ -107,6 +113,7 @@ def reject_friend_request(request):
         relationship.delete()
     return redirect('profiles:friend-requests-received-view')  
 
+@login_required
 def available_profiles_list_view(request):
     user = request.user
     profiles = Profile.objects.get_all_profiles_available(user)
@@ -116,6 +123,7 @@ def available_profiles_list_view(request):
     }
     return render(request, 'profiles/available_profiles_list.html', context) 
 
+@login_required
 def send_friend_request_view(request):
     if request.method == 'POST':
         sender = Profile.objects.get(user=request.user)
@@ -124,7 +132,7 @@ def send_friend_request_view(request):
         return redirect(request.META.get('HTTP_REFERER'))
     return redirect('profiles:my-profile-view')
 
-
+@login_required
 def remove_from_friends(request):
     if request.method == 'POST':
         sender = Profile.objects.get(user=request.user)
