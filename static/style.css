@@ -46,3 +46,33 @@ ul {
 .comment-box {
     display: none;
 }
+
+.friends-list {
+    background-color: #4267B2;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.friends-list:hover, .friends-list:active {
+    background-color: rgb(189, 189, 189);
+    color: #4267b2;
+}
+
+.post-content {
+    color: #4267B2;
+    font-weight: bold;
+}
+
+#comment-body {
+    color: black;
+}
+
+.comment-user{
+    font-weight: bold;
+    color: black;
+}
+
