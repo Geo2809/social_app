@@ -17,7 +17,7 @@
                         <div class="twelve wide column">
                             <h3>{{ profile.user }}</h3>
                             <p>{{ profile.bio }}</p>
-                            <a href="">
+                            <a href="{{ profile.get_absolute_url }}">
                                 <button class="ui primary button mb-5 w-big">See Profile</button>
                             </a>
                             <form action="{% url 'profiles:accept-friend-request-view' %}" method="POST">
