@@ -21,7 +21,7 @@
                     
                 </div>
                 <img class="ui avatar image" src={{post.author.avatar.url}}> 
-                {{ post.author.user }} - {{ post.created|timesince}} ago
+                <a href="{{ post.author.get_absolute_url }}">{{ post.author.user }}</a> - {{ post.created|timesince}} ago
             </div>
             <div class="ui fluid image">
                 {% if post.image %}
@@ -29,31 +29,29 @@
                 {% endif %}
             </div>
             <div class="content">
-                <p> {{ post.content }} </p>
+                <p class="post-content"> {{ post.content }} </p>
                 <div class="right floated">
                     <form action="{% url 'posts:like-post-view' %}" method="POST" class='like-form' id='{{post.id}}'>
                         {% csrf_token %}
                         <input type="hidden" name="post_id" value={{post.id}}>
                         
-                            <button type="submit" class="ui button like-btn{{post.id}}">
+                            <button type="submit" class="like-btn{{post.id}} ui labeled button" tabindex="0">
+                                <div class="ui blue button">
                                 {% if profile not in post.liked.all %}
-                                    Like
+                                    <i class="heart icon"></i>Like
                                     {% else %}
-                                    UnLike
-                                {% endif %}
+                                    <i class="heart icon"></i>Unlike
+                                    {% endif %}
+                                </div>
                             </button>
-                            <div class="ui grid">
-                                <div class="column">
-                                    <div class="like-count{{post.id}}"> {{post.number_of_likes}} </div>
-                                </div>
-                                <div class="column">
-                                    likes
-                                </div>
+                            <div class="ui large blue left pointing label nr-of-likes">
+                                {{post.number_of_likes}}
                             </div>
+                                
                     </form>
                 </div>
                 <i class="comment icon"></i>
-                <span> {{ post.num_comments }} comments</span>
+                <span> {{ post.number_of_comments }} comments</span>
             </div>
             <div class="extra content">
                 <div class="mb-5">
@@ -66,8 +64,8 @@
                     
                         <div class="ui segment mb-5">
                             <img class="ui avatar image" src={{comment.user.avatar.url}}>
-                            <span>{{ comment.user }}</span>
-                            <div class='mt-5'>{{ comment.body }}</div>
+                            <span class="comment-user">{{ comment.user }}</span> - {{ comment.created|timesince }}
+                            <div class='mt-5'><p id='comment-body'>{{ comment.body }}</p></div>
                         </div>
                     
                     {% endfor %}
@@ -94,7 +92,7 @@
             <form action="" method="POST" class='ui form' enctype="multipart/form-data">
                 {% csrf_token %}
                 {{post_form}}
-                <button type='submit' name="submit_post_form" class="ui positive button w-full mt-5">Send</button>
+                <button type='submit' name="submit_post_form" class="ui secondary button w-full mt-5">Send</button>
             </form>
         </div>
     </div>
