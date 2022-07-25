@@ -74,7 +74,7 @@ class Profile(models.Model):
         
 
     def __str__(self) -> str:
-        return f"{self.first_name} - {self.last_name} - {self.user.username}"
+        return f"{self.first_name} - {self.last_name}"
 
     def save(self, *args, **kwargs):
         if self.first_name and self.last_name:

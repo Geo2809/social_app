@@ -145,3 +145,12 @@ def remove_from_friends(request):
         return redirect(request.META.get('HTTP_REFERER'))
     return redirect('profiles:my-profile-view')
         
+
+def search_in_friends_list(request):
+    query = request.GET.get('q')
+    profile = request.user.friends.get(user__username__icontains=query)
+    
+    context = {
+        'profile': profile
+    }
+    return render(request, 'profiles/search_in_friends_list.html', context)
